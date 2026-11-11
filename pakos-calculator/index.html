@@ -1,0 +1,194 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Pako’s Calculator">
+<meta name="theme-color" content="#14202b">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="apple-touch-icon" sizes="180x180" href="icon-180.png">
+<link rel="icon" type="image/png" href="icon-192.png">
+<title>Pako’s Calculator</title>
+<style>
+:root{--bg:#eef1f5;--card:#fff;--ink:#14202b;--mute:#5b6b7a;--line:#d5dce4;--acc:#1f4fd8;--accink:#fff;--risk:#b8321f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0e1620;--card:#16212d;--ink:#e8eef4;--mute:#93a3b3;--line:#2a3a4a;--acc:#6f95ff;--accink:#0e1620;--risk:#ff8a75}}
+:root[data-theme="dark"]{--bg:#0e1620;--card:#16212d;--ink:#e8eef4;--mute:#93a3b3;--line:#2a3a4a;--acc:#6f95ff;--accink:#0e1620;--risk:#ff8a75}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.45 -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif}
+main{max-width:460px;margin:0 auto;padding:20px 16px 40px}
+h1{font-size:22px;margin:4px 0 16px;letter-spacing:-.01em}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:16px;margin-bottom:14px}
+label{display:block;font-size:14px;color:var(--mute);margin:0 0 6px}
+.row{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+.row:last-child,.f:last-child{margin-bottom:0}
+.f{margin-bottom:14px}
+input,select{width:100%;font:inherit;font-size:17px;color:var(--ink);background:var(--bg);border:1px solid var(--line);border-radius:10px;padding:11px 12px;font-variant-numeric:tabular-nums}
+input:focus,select:focus,button:focus-visible{outline:2px solid var(--acc);outline-offset:1px}
+.combo{position:relative}.combo input{padding-right:46px}.combo select{position:absolute;right:0;top:0;width:46px;height:100%;opacity:0;cursor:pointer}.chev{position:absolute;right:16px;top:50%;transform:translateY(-50%);color:var(--mute);pointer-events:none}
+.hint{font-size:13px;color:var(--mute);margin-top:6px}
+.out{text-align:left}
+.big{font-size:44px;font-weight:700;letter-spacing:-.02em;font-variant-numeric:tabular-nums;line-height:1.1}
+.big small{font-size:16px;font-weight:500;color:var(--mute);margin-left:6px}
+dl{display:grid;grid-template-columns:1fr auto;gap:8px 12px;margin:16px 0 0;font-variant-numeric:tabular-nums}
+dt{color:var(--mute)}dd{margin:0;text-align:right;font-weight:600}
+.risk{color:var(--risk)}
+.err{color:var(--risk);font-size:14px;margin:0}
+.note{font-size:12.5px;color:var(--mute);line-height:1.5}
+:root{--gold:#d4af36}
+h1::after{content:"";display:block;width:44px;height:3px;border-radius:2px;background:var(--gold);margin-top:8px}
+main section.card:first-of-type{border-top:3px solid var(--gold)}
+input:focus,select:focus{border-color:var(--gold)}
+.out{background:#14202b;border-color:#2a3a4a;color:#e8eef4}
+@media (prefers-color-scheme:dark){.out{background:#0b121a}}
+.out label,.out dt,.out .big small{color:#93a3b3}
+.out .big,.out dd.risk{color:var(--gold)}
+.out dd{color:#e8eef4}
+.out .err{color:#ff8a75}
+.lnk{background:none;border:0;padding:6px 0;color:var(--acc);font:inherit;font-size:14px;text-decoration:underline;cursor:pointer}
+html{-webkit-text-size-adjust:100%}
+main{padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+@media (max-width:359px){.row{grid-template-columns:1fr}.big{font-size:38px}h1{font-size:20px}}
+@media (min-width:700px){
+main{max-width:880px;padding-top:32px;padding-bottom:56px;padding-left:max(28px,env(safe-area-inset-left,0px));padding-right:max(28px,env(safe-area-inset-right,0px));display:grid;grid-template-columns:1fr 1fr;gap:18px;align-items:start}
+h1,.note{grid-column:1/-1}
+h1{font-size:30px;margin:0}
+.card{margin-bottom:0;padding:24px}
+.out{position:sticky;top:16px}
+.big{font-size:60px}
+input,select{padding:13px 14px}
+}
+</style>
+</head>
+<body>
+<main>
+<h1>Pako’s Calculator</h1>
+
+<section class="card">
+  <div class="row">
+    <div><label for="bal">Saldo del conto</label><input id="bal" type="number" inputmode="decimal" value="10000" min="0"></div>
+    <div><label for="cur">Valuta del conto</label>
+      <select id="cur"><option>EUR</option><option selected>USD</option><option>GBP</option><option>CHF</option><option>JPY</option><option>CAD</option><option>AUD</option><option>NZD</option></select></div>
+  </div>
+  <div class="f"><label for="pair">Coppia</label>
+    <div class="combo"><input id="pair" type="text" value="EURUSD" placeholder="Scrivi o scegli, es. EURUSD" autocomplete="off" autocapitalize="characters" autocorrect="off" spellcheck="false"><select id="pairsel" aria-label="Scegli la coppia dalla lista"></select><span class="chev" aria-hidden="true">▾</span></div></div>
+  <div class="f" id="rateBox" hidden>
+    <div class="hint" id="rateInfo"></div>
+    <button type="button" id="rateEdit" class="lnk">Modifica cambio</button>
+    <div id="rateEd" hidden>
+    <label for="rate" id="rateLbl">Cambio</label>
+    <input id="rate" type="number" inputmode="decimal" step="any" placeholder="es. 0,92">
+    <button type="button" id="rateAuto" class="lnk">Torna all’automatico</button>
+    </div>
+  </div>
+  <div class="row">
+    <div><label for="rmode">Tipo di rischio</label><select id="rmode"><option value="pct">Percentuale (%)</option><option value="money">Denaro</option></select></div>
+    <div><label for="risk" id="riskLbl">Rischio (%)</label><input id="risk" type="number" inputmode="decimal" value="1" min="0" step="0.1"></div>
+    <div><label for="sl">Stop loss (pip)</label><input id="sl" type="number" inputmode="decimal" value="50" min="0"></div>
+    <div><label for="tl">Dimensione trade (lotti)</label><input id="tl" type="number" inputmode="decimal" value="1" min="0" step="0.01"></div>
+  </div>
+</section>
+
+<section class="card out" aria-live="polite">
+  <label>Dimensione posizione</label>
+  <div class="big"><span id="lots">–</span><small>lotti</small></div>
+  <p class="err" id="err"></p>
+  <dl>
+    <dt>Unità</dt><dd id="units">–</dd>
+    <dt>Rischio in denaro</dt><dd id="rmoney" class="risk">–</dd>
+    <dt>Valore del pip (1 lotto)</dt><dd id="pipv">–</dd>
+    <dt>Perdita effettiva allo stop</dt><dd id="real">–</dd>
+    <dt id="tlLbl">Rischio con 1 lotto</dt><dd id="tlrisk" class="risk">–</dd>
+  </dl>
+</section>
+
+<p class="note">Strumento educativo. I lotti sono arrotondati per difetto a 0,01. Controlla sempre il valore del pip sul tuo broker.</p>
+</main>
+
+<script>
+(function(){
+  var $=function(id){return document.getElementById(id)};
+  var pairs=["EURUSD","EURGBP","EURJPY","EURCHF","EURCAD","EURAUD","EURNZD","GBPUSD","GBPJPY","GBPCHF","GBPCAD","GBPAUD","GBPNZD","AUDUSD","AUDJPY","AUDCHF","AUDCAD","AUDNZD","NZDUSD","NZDJPY","NZDCHF","NZDCAD","USDJPY","USDCHF","USDCAD","CADJPY","CADCHF","CHFJPY"];
+  $("pairsel").innerHTML=pairs.map(function(p){return "<option value=\""+p+"\">"+p.slice(0,3)+"/"+p.slice(3)+"</option>"}).join("");
+  $("pairsel").addEventListener("change",function(){$("pair").value=this.value;calc()});
+  $("pair").addEventListener("focus",function(){this.select()});
+  var USD={USD:1,EUR:1.110,GBP:1.331,AUD:0.688,NZD:0.557,JPY:1/159.3,CAD:1/1.422,CHF:1/0.833},rateSrc="indicativi 11/11/2026",manual=false,lastKey="",KEY="calc-posizione-v2", ids=["bal","cur","risk","rmode","sl","tl","pair"];
+
+  function load(){try{var s=JSON.parse(localStorage.getItem(KEY)||"{}");ids.forEach(function(i){if(s[i]!==undefined)$(i).value=s[i]})}catch(e){}}
+  function save(){try{var s={};ids.forEach(function(i){s[i]=$(i).value});localStorage.setItem(KEY,JSON.stringify(s))}catch(e){}}
+  function num(v){return parseFloat(String(v).replace(",","."))}
+  function money(v,c){try{return new Intl.NumberFormat("it-IT",{style:"currency",currency:c}).format(v)}catch(e){return v.toFixed(2)+" "+c}}
+
+  function calc(){
+    var bal=num($("bal").value),rk=num($("risk").value),sl=num($("sl").value),tl=num($("tl").value);
+    var cur=$("cur").value,pair=$("pair").value.toUpperCase().replace(/[^A-Z]/g,""),quote=pair.slice(3);
+    var validPair=pairs.indexOf(pair)>-1;
+    if(validPair)$("pairsel").value=pair;
+    $("riskLbl").textContent=$("rmode").value==="money"?"Rischio ("+cur+")":"Rischio (%)";
+    var pipSize=quote==="JPY"?0.01:0.0001;
+    var pipQuote=100000*pipSize; // valore del pip per 1 lotto, in valuta di quotazione
+    var needRate=validPair&&quote!==cur;
+    $("rateBox").hidden=!needRate;
+    
+    var rate=1;
+    if(needRate){
+      var auto=USD[quote]/USD[cur],key=quote+cur;
+      if(!manual||lastKey!==key){manual=false;lastKey=key;$("rate").value=String(+auto.toPrecision(5));$("rateEd").hidden=true;$("rateEdit").hidden=false}
+      rate=num($("rate").value);
+      $("rateLbl").textContent="Cambio: 1 "+quote+" = ? "+cur;
+      $("rateInfo").textContent="Cambio automatico: 1 "+quote+" = "+(rate>0?String(+rate.toPrecision(4)).replace(".",","):"–")+" "+cur+" ("+rateSrc+")"+(manual?" · modificato da te":"");
+    }
+    var err="";
+    ["lots","units","rmoney","pipv","real","tlrisk"].forEach(function(i){$(i).textContent="–"});
+    if(!validPair) err="Scrivi una coppia valida, per esempio EURUSD o EUR/USD.";
+    else if(!(bal>0)||!(rk>0)||!(sl>0)) err="Inserisci saldo, rischio e stop loss maggiori di zero.";
+    else if(needRate&&!(rate>0)) err="Inserisci il cambio "+quote+"/"+cur+" per continuare.";
+    $("err").textContent=err;
+    if(err){save();return}
+    var pipAcc=pipQuote*rate;
+    var rmoney=$("rmode").value==="money"?rk:bal*rk/100;
+    var lots=Math.floor(rmoney/(sl*pipAcc)*100+1e-9)/100;
+    $("lots").textContent=lots.toFixed(2).replace(".",",");
+    $("units").textContent=Math.round(lots*100000).toLocaleString("it-IT");
+    $("rmoney").textContent=money(rmoney,cur);
+    $("pipv").textContent=money(pipAcc,cur);
+    $("real").textContent=money(lots*sl*pipAcc,cur);
+    var tn=tl>0?tl:1,tr=tn*sl*pipAcc;
+    $("tlLbl").textContent="Rischio con "+String(tn).replace(".",",")+(tn===1?" lotto":" lotti");
+    $("tlrisk").textContent=money(tr,cur)+" ("+(tr/bal*100).toFixed(2).replace(".",",")+"%)";
+    save();
+  }
+  load();
+  var prevMode=$("rmode").value;
+  $("rate").addEventListener("input",function(){manual=true;calc()});
+  $("rateEdit").addEventListener("click",function(){$("rateEd").hidden=false;this.hidden=true});
+  $("rateAuto").addEventListener("click",function(){manual=false;lastKey="";calc()});
+  $("rmode").addEventListener("change",function(){var b=num($("bal").value),r=num($("risk").value);if(b>0&&r>0&&prevMode!==this.value){var v=this.value==="money"?b*r/100:r/b*100;$("risk").value=Math.round(v*100)/100}prevMode=this.value});
+  ids.forEach(function(i){$(i).addEventListener("input",calc);$(i).addEventListener("change",calc)});
+  calc();
+  // Cambi automatici: prova le fonti in ordine, poi resta la tabella indicativa
+  (function(){
+    var syms="EUR,GBP,JPY,CHF,CAD,AUD,NZD",codes=syms.split(",");
+    var tries=[
+      {u:"https://api.frankfurter.dev/v1/latest?base=USD&symbols="+syms,p:function(d){return{m:d.rates,l:"ECB "+d.date}}},
+      {u:"https://api.frankfurter.dev/v2/rates?base=USD&quotes="+syms,p:function(r){var m={};r.forEach(function(x){m[x.quote]=x.rate});return{m:m,l:"Frankfurter"}}},
+      {u:"https://open.er-api.com/v6/latest/USD",p:function(d){return{m:d.rates,l:"open.er-api "+String(d.time_last_update_utc||"").slice(5,16)}}}
+    ];
+    function get(u){var c=new AbortController(),t=setTimeout(function(){c.abort()},7000);
+      return fetch(u,{signal:c.signal}).then(function(r){clearTimeout(t);if(!r.ok)throw 0;return r.json()})}
+    (function next(i){
+      if(i>=tries.length)return;
+      get(tries[i].u).then(function(d){
+        var o=tries[i].p(d),ok=o.m&&codes.every(function(c){return o.m[c]>0});
+        if(!ok)throw 0;
+        codes.forEach(function(c){USD[c]=1/o.m[c]});
+        rateSrc="cambi "+o.l;calc();
+      }).catch(function(){next(i+1)});
+    })(0);
+  })();
+})();
+</script>
+</body>
+</html>
